@@ -2,9 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>For Elaiza ❤️</title>
     <style>
+        /* Essential for iPhone 13 screen handling */
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
             display: flex;
             justify-content: center;
@@ -12,22 +18,22 @@
             height: 100vh;
             margin: 0;
             background-color: #fce4ec;
-            font-family: 'Arial', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             overflow: hidden;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
 
         #card {
             background: white;
-            padding: 30px;
+            padding: 20px;
             border-radius: 25px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             text-align: center;
             position: relative;
-            max-width: 450px;
+            max-width: 350px; /* Slimmer for iPhone 13 width */
             width: 90%;
             z-index: 5;
-            /* Ensures the card height doesn't jump */
-            min-height: 550px; 
+            min-height: 480px; 
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -35,14 +41,13 @@
 
         .video-container {
             width: 100%;
-            height: 250px; /* Fixed height to keep card stable */
+            height: 200px; /* Slightly smaller for mobile height */
             border-radius: 15px;
             overflow: hidden;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #fff; /* Optional: matches card bg */
         }
 
         img {
@@ -50,15 +55,15 @@
             max-height: 100%;
             display: block;
             border-radius: 15px;
-            /* This keeps the image ratio without stretching */
             object-fit: contain; 
         }
 
         h1 {
             color: #444;
             font-size: 1.1rem;
-            margin-bottom: 25px;
-            min-height: 60px;
+            margin-bottom: 15px;
+            min-height: 50px;
+            padding: 0 10px;
         }
 
         .btn-container {
@@ -66,59 +71,74 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 220px; 
+            height: 180px; 
             width: 100%;
         }
 
         #yesBtn {
             background-color: #e91e63;
             color: white;
-            padding: 15px 35px;
+            padding: 15px 30px;
             border: none;
             border-radius: 12px;
             font-weight: bold;
             cursor: pointer;
             transition: transform 0.2s ease;
             z-index: 10;
+            font-size: 1rem;
         }
 
         #noBtn {
             background-color: #999;
             color: white;
-            width: 80px;
-            height: 45px;
+            width: 70px;
+            height: 40px;
             border: none;
             border-radius: 12px;
             cursor: pointer;
             position: absolute;
             z-index: 1000; 
-            bottom: 20px;
-            right: 20px;
             transition: 0.1s ease-out;
-            transform: scale(1) !important;
+        }
+
+        /* Final State Styles for iPhone Safe Area */
+        .full-screen-yes {
+            position: fixed !important;
+            top: 5% !important;
+            left: 5% !important;
+            width: 90vw !important;
+            height: 90vh !important;
+            z-index: 9999 !important;
+            border-radius: 20px !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            font-size: 1.8rem !important;
+            padding: 20px !important;
+            text-align: center !important;
+            transform: none !important;
         }
 
         .success { display: none; text-align: center; }
-        .success h1 { color: #e91e63; font-size: 2rem; }
+        .success h1 { color: #e91e63; font-size: 1.5rem; }
 
         .heart {
             position: absolute;
             color: #e91e63;
             font-size: 20px;
-            user-select: none;
             animation: float 4s linear infinite;
             z-index: 1;
         }
 
         @keyframes float {
-            0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
+            0% { transform: translateY(105vh) rotate(0deg); opacity: 1; }
             100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
         }
     </style>
 </head>
 <body>
 
-    <audio id="happyMusic" loop>
+    <audio id="happyMusic" loop playsinline>
         <source src="https://www.myinstants.com/media/sounds/happy-happy-happy-cat.mp3" type="audio/mpeg">
     </audio>
 
@@ -178,47 +198,42 @@
             "You're breaking my heart baby 😓",
             "bad na kaau ka babi ha! 😤😤",
             "hilak nako ron... 😔😔",
-            "sige lang kapoyon raka sige gukod sa no button! 😝😝",
-            "bisag kausa lang babb... pislita ang yes 🥺🙏",
-            "Pislita ang DAKO right now!!!!",
-            "hala sige... i-no pa jud! 🙄🙄",
-            "last chance na ni babbb... 🌹🌹",
-            "isumbong tika sa imong mama ron!! 🤣 jk",
+            "sige lang kapoyon raka! 😝😝",
+            "bisag kausa lang babb... 🥺🙏",
+            "Pislita ang DAKO right now!",
+            "hala sige... i-no pa jud! 🙄",
+            "last chance na ni babbb... 🌹",
+            "isumbong tika sa imong mama!! 🤣",
             "YES na pleaseeee! 💖💖💖"
         ];
 
         function moveNoButton() {
             const containerWidth = boundary.offsetWidth;
             const containerHeight = boundary.offsetHeight;
+            
+            // Generate random positions within the button area
             let randomX = Math.random() * (containerWidth - noBtn.offsetWidth);
             let randomY = Math.random() * (containerHeight - noBtn.offsetHeight);
 
             noBtn.style.left = `${randomX}px`;
             noBtn.style.top = `${randomY}px`;
             
-            // Sequential GIF swap
             mainGif.src = sadGifs[noCount % sadGifs.length];
 
             noCount++;
             scale += 0.15;
-            yesBtn.style.transform = `scale(${scale})`;
+            
+            // Stop scaling before it becomes too big for the card
+            if (scale < 3) {
+                yesBtn.style.transform = `scale(${scale})`;
+            }
 
             if (noCount <= messages.length) {
                 questionText.innerText = messages[noCount - 1];
             }
 
             if (noCount >= 20) {
-                yesBtn.style.position = 'fixed';
-                yesBtn.style.top = '0';
-                yesBtn.style.left = '0';
-                yesBtn.style.width = '100vw';
-                yesBtn.style.height = '100vh';
-                yesBtn.style.zIndex = '9999';
-                yesBtn.style.borderRadius = '0';
-                yesBtn.style.display = 'flex';
-                yesBtn.style.justifyContent = 'center';
-                yesBtn.style.alignItems = 'center';
-                yesBtn.style.fontSize = '2.5rem';
+                yesBtn.classList.add('full-screen-yes');
                 yesBtn.innerText = "CLICK YES BABII PLEASE 🥹🙏";
                 noBtn.style.display = 'none';
             }
@@ -229,14 +244,15 @@
             heart.classList.add('heart');
             heart.innerHTML = '❤️';
             heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.animationDuration = Math.random() * 2 + 3 + 's';
+            heart.style.animationDuration = Math.random() * 2 + 2 + 's';
             document.body.appendChild(heart);
             setTimeout(() => { heart.remove(); }, 4000);
         }
 
+        // Mouseover for desktop, click/touchstart for mobile
         noBtn.addEventListener('mouseover', moveNoButton);
-        noBtn.addEventListener('click', (e) => {
-            e.preventDefault();
+        noBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Prevents accidental scrolling
             moveNoButton();
         });
 
@@ -244,7 +260,13 @@
             mainContent.style.display = 'none';
             successScreen.style.display = 'block';
             document.body.style.backgroundColor = '#ff80ab';
-            music.play();
+            
+            // Audio workaround for iOS
+            music.play().catch(() => {
+                // Browsers often block audio until user clicks
+                console.log("Audio needs user interaction");
+            });
+
             setInterval(createHeart, 300); 
         });
     </script>
